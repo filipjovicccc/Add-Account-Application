@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
 import { createContext, useState } from 'react';
+import { useEffect } from 'react';
 
 export const UsersContext = createContext(null)
 const dummyUsers = [
@@ -36,8 +37,17 @@ function App() {
 
   const[users, setUsers] = useState(dummyUsers)
 
-
   
+   const getStorage = () => JSON.parse(localStorage.getItem('users'));
+   useEffect(() => {
+    const storedTasks = getStorage()
+
+    if (storedTasks) {
+      setUsers(storedTasks);
+    } else {
+      console.log('No users found in local storage.');
+    }
+  }, []);
 return (
     <div className="App">
      <Navbar />

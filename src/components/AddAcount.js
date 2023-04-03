@@ -16,6 +16,7 @@ function AddAccount() {
   const addNewUser = (newUser) => {
     setUsers((prevUsers) => {
       const updatedUsers = [newUser, ...prevUsers];
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
       return updatedUsers;
     });
   };
