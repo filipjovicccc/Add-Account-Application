@@ -1,7 +1,9 @@
 import React from 'react'
-import Card from './Card'
-import { useContext, useState } from 'react'
-import { UsersContext } from '../App'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { addUsers } from '../store/userSlice'
+
+
 
 function AddAccount() {
   const [name, setName] = useState("")
@@ -10,19 +12,46 @@ function AddAccount() {
   const [email, setEmail] = useState("")
   const [salary, setSalary] = useState("")
 
-  const {users, setUsers} = useContext(UsersContext)
 
+
+  const dispatch = useDispatch()
 
   const addNewUser = (newUser) => {
-    setUsers((prevUsers) => {
-      const updatedUsers = [newUser, ...prevUsers];
-      localStorage.setItem('users', JSON.stringify(updatedUsers));
-      return updatedUsers;
-    });
-  };
+    dispatch(addUsers(newUser));
+};
+  const isValidName = (name) => /^[a-zA-Z]+$/.test(name);
+  const isValidLastName = (lastName) =>  /^[a-zA-Z]+$/.test(lastName);
+  const isValidPhoneNumber = (phoneNumber) => /^\d+$/.test(phoneNumber);
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isValidSalary = (salary) => /^\d+$/.test(salary);
+
+ 
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!isValidName(name)) {
+      alert("Please enter a valid name (letters only)");
+      return;
+    }
+    if (!isValidLastName(lastName)) {
+      alert("Please enter a valid last name (letters only)");
+      return;
+    }
+    
+    if (!isValidPhoneNumber(phoneNumber)) {
+      alert("Please enter a valid phone number (numbers only)");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      alert("Please enter a valid email address");
+      return;
+    }
+    
+    if (!isValidSalary(salary)) {
+      alert("Please enter a valid salary (numbers only)");
+      return;
+    }
     const newUsers = {
       id: Date.now(),
       name: name,
@@ -38,7 +67,9 @@ function AddAccount() {
     setPhoneNumber("");
     setEmail("");
     setSalary("");
+
   };
+
   return (
     <div>
       <form onSubmit={handleSubmit} className="form">

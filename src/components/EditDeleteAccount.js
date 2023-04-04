@@ -1,12 +1,22 @@
 import React from 'react'
 import Card from './Card'
-import { UsersContext } from '../App'
-import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { useEffect } from 'react'
+import { deleteUsers } from '../store/userSlice'
+
 
 function EditDeleteAccount() {
 
- const {users} = useContext(UsersContext)
+ const { users } = useSelector((state) => state.userStore);
+
+ const dispatch = useDispatch()
+
+ useEffect(()=> {
+  console.log(users)
+},[users])
+
+
 
   return (
     <Card title="Edit and Delete Accounts">
@@ -31,6 +41,11 @@ function EditDeleteAccount() {
             <td>{user.salary}</td>
             <td>
             <Link className="btn btn-warning me-2" to={"/EditAccount/" + user.id}>Edit</Link>
+
+            <button className="btn btn-danger" onClick={() => {
+                        dispatch(deleteUsers(user.id))
+                    }}>Delete
+                    </button>
 
             </td>
           </tr>

@@ -1,66 +1,66 @@
-import React, { useState} from 'react'
-import Card from './Card'
-import { useContext } from 'react'
-import { UsersContext } from '../App'
-import { useParams } from 'react-router-dom'
+import React, {useEffect, useState} from 'react';
+import Card from './Card';
+import {useNavigate, useParams} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import { updateUsers } from '../store/userSlice';
 
 function EditAccount() {
-    
-    const {users, setUsers} = useContext(UsersContext)
-    
+    const [inputData, setInputData] = useState({name: "", phone: "", email: "", deposit: ""});
+    const {users} = useSelector((state) => state.userStore)
+    const redirect = useNavigate()
     const {id} = useParams()
-    const userToEdit = users.find(user => user.id === parseInt(id))
-
-    
-    const [name, setName] = useState(userToEdit.name)
-    const [lastName, setLastName] = useState(userToEdit.lastName)
-    const [phoneNumber, setPhoneNumber] = useState(userToEdit.phoneNumber)
-    const [email, setEmail] = useState(userToEdit.email)
-    const [salary, setSalary] = useState(userToEdit.salary)
-
-  //   const setStorage = () => {
-  //     localStorage.setItem('users', JSON.stringify(users))
-  //  }
-
-    
-    const updateUsers = (e) => {
-      e.preventDefault();
-      setUsers((prevUsers) => {
-        const updatedUsers = prevUsers.map((user) => {
-          if (user.id === userToEdit.id) {
-            return { ...user, name, lastName, phoneNumber, email, salary };
-          }
-          return user;
-        });
-        localStorage.setItem('users', JSON.stringify(updatedUsers)); // update local storage
-        return updatedUsers;
-      });
-    };
+    const dispatch = useDispatch()
+    useEffect(() => {
+        setInputData(users.find(user => user.id === parseInt(id)))
+    }, [])
 
 
+    const inputHandler = (e) => {
+        let copyInputData = {...inputData}
+        copyInputData[e.target.name] = e.target.value
+        setInputData(copyInputData)
+    }
 
-  return (
-    <Card title="Eddit Account">
-
-     <form onSubmit={updateUsers} key={userToEdit.id} className='form'>
-          <label>Name:</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} name="name" placeholder='name'/>
-          <label>Last Name:</label>
-          <input value={lastName}  onChange={(e) => setLastName(e.target.value)}  name="last name" placeholder='last name' />
-          <label>Phone Number: </label>
-          <input value={phoneNumber}  onChange={(e) => setPhoneNumber(e.target.value)}  name="phone number" placeholder="phone number"/>
-          <label>Email: </label>
-          <input value={email} onChange={(e) => setEmail(e.target.value)}  name="email" placeholder="email"/>
-          <label>Salary: </label>
-          <input value={salary}  onChange={(e) => setSalary(e.target.value)} name="salary" placeholder="salary"/>
-
-          <button type="submit">Eddit user</button>
-     </form>
-
-
-   
-  </Card>
-  )
+    const submitHandler = (e) => {
+        e.preventDefault()
+        dispatch(updateUsers(inputData))
+        redirect("/editDeleteAccount")
+    }
+    return (
+        <Card title={"Edit account"}>
+            <form onSubmit={submitHandler}>
+                <input
+                    type="text"
+                    className="form-control mb-2"
+                    placeholder="Name" name="name"
+                    value={inputData.name}
+                    onInput={inputHandler}
+                />
+                <input
+                    type="text"
+                    className="form-control mb-2"
+                    placeholder="Email"
+                    name="email"
+                    value={inputData.email}
+                    onInput={inputHandler}/>
+                <input
+                    type="text"
+                    className="form-control mb-2"
+                    placeholder="Phone"
+                    name="phone"
+                    value={inputData.phone}
+                    onInput={inputHandler}/>
+                <input
+                    type="text"
+                    className="form-control mb-2"
+                    placeholder="Deposit"
+                    name="deposit"
+                    value={inputData.deposit}
+                    onInput={inputHandler}/>
+                <button className="btn btn-primary px-5">Save Changes</button>
+            </form>
+        </Card>
+    );
 }
 
-export default EditAccount
+export default EditAccount;
